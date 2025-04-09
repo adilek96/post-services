@@ -1,0 +1,39 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id            Int           @id @default(autoincrement())
+  title         String
+  content       String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  categories    Category[]    @relation("PostCategory")
+  subcategories Subcategory[] @relation("PostSubcategory")
+  media         Media[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[] @relation("PostCategory")
+}
+
+model Subcategory {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[] @relation("PostSubcategory")
+}
+
+model Media {
+  id     Int    @id @default(autoincrement())
+  url    String
+  type   String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId Int
+}
