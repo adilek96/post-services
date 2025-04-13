@@ -20,7 +20,7 @@ RUN npm run build
 FROM node:22-slim AS production
 
 # Установка необходимых зависимостей для работы Prisma
-RUN apt-get update && apt-get install -y openssl libssl1.1 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
