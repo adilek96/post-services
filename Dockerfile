@@ -10,7 +10,7 @@ RUN npm install --legacy-peer-deps
 # Копируем исходный код
 COPY . .
 
-# Генерируем клиента Prisma
+# Генерируем клиента Prisma с поддержкой разных версий OpenSSL
 RUN npx prisma generate
 
 # Сборка проекта
@@ -18,6 +18,9 @@ RUN npm run build
 
 # Этап продакшн
 FROM node:22-slim AS production
+
+# Установка необходимых зависимостей для работы Prisma
+RUN apt-get update && apt-get install -y openssl libssl1.1 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -35,11 +38,12 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/.env ./.env
 
+# Копируем Prisma Client со всеми скомпилированными движками
+COPY --from=build /app/node_modules/.prisma/client ./node_modules/.prisma/client
+COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
+
 # Открываем порт 4002
 EXPOSE 4002
-
-# Копируем файлы Prisma
-COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 
 # Запускаем приложение из dist/src/main
 CMD ["node", "dist/src/main.js"]
