@@ -42,7 +42,8 @@ COPY --from=build /app/.env ./.env
 COPY --from=build /app/node_modules/.prisma/client ./node_modules/.prisma/client
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
 
-# Открываем порт 4002
+# Явно указываем, что используем только порт 4002
+ENV PORT=4002
 EXPOSE 4002
 
 # Запускаем приложение из dist/src/main
