@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -12,6 +11,10 @@ import { DeletePostModule } from './posts/delete-post/delete-post.module';
 import { UpdatePostModule } from './posts/update-post/update-post.module';
 import { GetAllPostsModule } from './posts/get-all-posts/get-all-posts.module';
 import { RedisModule } from './redis/redis.module'; 
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthController } from './health.controller';
+import { PrismaHealthIndicator } from './prisma/prisma.health';
+import { HttpModule } from '@nestjs/axios';
 
 
 
@@ -32,10 +35,13 @@ import { RedisModule } from './redis/redis.module';
     UpdatePostModule,
     GetAllPostsModule,
     RedisModule,
+    TerminusModule,
+    HttpModule,
     
 ],
   
-  providers: [PrismaService, AppResolver],
+  controllers: [HealthController],
+  providers: [PrismaService, AppResolver, PrismaHealthIndicator],
   exports: [PrismaService],
 })
 export class AppModule {}
